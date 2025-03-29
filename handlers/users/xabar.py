@@ -1,10 +1,10 @@
 from aiogram.types import Message
-from loader import dp, bot, ADMINS
+from loader import dp, bot, ADMINS, private
 from aiogram.filters import Command
 from states.help_stt import Help
 from aiogram.fsm.context import FSMContext
 
-@dp.message(Command("xabar"))
+@dp.message(Command("xabar"), private)
 async def help_commands(message:Message,state:FSMContext):
     await message.answer("Xabaringizni yozib ✍🏻 \nMurojatingiz 👤 adminga boradi !")
     await state.set_state(Help.help)

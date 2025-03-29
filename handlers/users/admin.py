@@ -1,4 +1,4 @@
-from loader import bot,db,dp,ADMINS
+from loader import bot,db,dp,ADMINS, private
 from aiogram.types import Message
 from aiogram.filters import Command
 from filters.admin import IsBotAdminFilter
@@ -9,17 +9,17 @@ import time
 from aiogram import F
 
 
-@dp.message(Command("admin"),IsBotAdminFilter(ADMINS))
+@dp.message(Command("admin"),IsBotAdminFilter(ADMINS), private)
 async def is_admin(message:Message):
     await message.answer(text="Admin menu",reply_markup=admin_keyboard.admin_button)
 
-@dp.message(F.text=="Foydalanuvchilar soni",IsBotAdminFilter(ADMINS))
+@dp.message(F.text=="Foydalanuvchilar soni",IsBotAdminFilter(ADMINS), private)
 async def users_count(message:Message):
     counts = db.count_users()
     text = f"Botimizda {counts[0]} ta foydalanuvchi bor"
     await message.answer(text=text)
 
-@dp.message(F.text=="Reklama yuborish",IsBotAdminFilter(ADMINS))
+@dp.message(F.text=="Reklama yuborish",IsBotAdminFilter(ADMINS), private)
 async def advert_dp(message:Message,state:FSMContext):
     await state.set_state(Adverts.adverts)
     await message.answer(text="Reklama yuborishingiz mumkin !")
