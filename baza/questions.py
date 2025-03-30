@@ -57,6 +57,10 @@ class Database:
     def question_names(self):
         sql = """SELECT test_name FROM Questions;"""
         return self.execute(sql, fetchall=True)
+    
+    def get_questions(self, test_name):
+        sql = """SELECT * FROM Questions WHERE test_name = ?;"""
+        return self.execute(sql, parameters=(test_name,), fetchall=True)
 
 def logger(statement):
     print(f"""

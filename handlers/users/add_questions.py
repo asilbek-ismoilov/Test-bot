@@ -10,13 +10,13 @@ from keyboard_buttons.inline.menu import ask
 import asyncio
 from keyboard_buttons.default.button import get_buttun
 
-@dp.message(F.text=="Savol qo'shish",IsBotAdminFilter(ADMINS))
+@dp.message(F.text=="Savol qo'shish", IsBotAdminFilter(ADMINS))
 async def add_questions(message:Message, state:FSMContext):
-    await message.answer("<b>🗂 Yangi savollar to'plamini yaratish uchun nom kiriting</b>", parse_mode="html",reply_markup=ReplyKeyboardRemove())
+    await message.answer("<b>🗂 Yangi savollar to'plamini yaratish uchun nom kiriting \nyoki Tugmalardan birini tanling</b>", parse_mode="html", reply_markup=get_buttun())
 
     await state.set_state(Questions.test_name)
 
-@dp.message(F.text, Questions.test_name)
+@dp.message(F.text, Questions.test_name,IsBotAdminFilter(ADMINS))
 async def test_name(message:Message, state:FSMContext):
     test_name = message.text
     await state.update_data(test_name=test_name)
@@ -29,7 +29,7 @@ async def test_name_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
-@dp.message(F.text, Questions.question)
+@dp.message(F.text, Questions.question, IsBotAdminFilter(ADMINS))
 async def question(message:Message, state:FSMContext):
     question = message.text
     await state.update_data(question=question)
@@ -42,7 +42,7 @@ async def question_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
-@dp.message(F.text, Questions.a)    
+@dp.message(F.text, Questions.a, IsBotAdminFilter(ADMINS))    
 async def a(message:Message, state:FSMContext):
     a = message.text.upper()
     await state.update_data(a=a)
@@ -55,7 +55,7 @@ async def a_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
-@dp.message(F.text, Questions.b)
+@dp.message(F.text, Questions.b, IsBotAdminFilter(ADMINS))
 async def b(message:Message, state:FSMContext):
     b = message.text.upper()
     await state.update_data(b=b)
@@ -68,7 +68,7 @@ async def b_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
-@dp.message(F.text, Questions.c)
+@dp.message(F.text, Questions.c, IsBotAdminFilter(ADMINS))
 async def c(message:Message, state:FSMContext):
     c = message.text.upper()
     await state.update_data(c=c)
@@ -81,7 +81,7 @@ async def c_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
-@dp.message(F.text, Questions.d)
+@dp.message(F.text, Questions.d, IsBotAdminFilter(ADMINS))
 async def d(message: Message, state: FSMContext):    
     d = message.text.upper()
     await state.update_data(d=d)
@@ -94,7 +94,7 @@ async def d_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
-@dp.callback_query(F.data, Questions.answer)
+@dp.callback_query(F.data, Questions.answer, IsBotAdminFilter(ADMINS))
 async def answer(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
     data = await state.get_data()
@@ -123,16 +123,16 @@ async def answer(callback: CallbackQuery, state: FSMContext):
 
 @dp.message(Questions.answer)
 async def answer_del(message:Message, state:FSMContext):
-    await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
+    await message.answer(text= "Tugmadan birini tanlang ! ")
     await message.delete()
 
-@dp.callback_query(F.data == "true")
+@dp.callback_query(F.data == "true", IsBotAdminFilter(ADMINS))
 async def add_another_question(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
     await callback.message.answer("<b>🗂 Yangi savollar to'plamini yaratish uchun nom kiriting \nyoki Tugmalardan birini tanling</b>", parse_mode="html", reply_markup=get_buttun())
     await state.set_state(Questions.test_name)
 
-@dp.callback_query(F.data == "false")
+@dp.callback_query(F.data == "false", IsBotAdminFilter(ADMINS))
 async def cancel(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
 
