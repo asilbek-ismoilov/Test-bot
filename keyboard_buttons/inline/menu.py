@@ -10,3 +10,13 @@ option = InlineKeyboardMarkup(
         ]
     ]
 )
+
+ask = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="✅", callback_data="true"), 
+            InlineKeyboardButton(text="❌", callback_data="false"), 
+        ]
+    ]
+)
+

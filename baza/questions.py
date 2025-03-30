@@ -29,10 +29,8 @@ class Database:
 
     def question_table(self):
         sql = """
-        CREATE TABLE IF NOT EXISTS USERS(
+        CREATE TABLE IF NOT EXISTS Questions(
         test_name TEXT,
-        user_id NUMBER unique,
-        fullname TEXT,
         question TEXT,
         A TEXT,
         B TEXT,
@@ -49,7 +47,16 @@ class Database:
             f"{item} = ?" for item in parameters
         ])
         return sql, tuple(parameters.values())
+    
+    def add_questions(self, test_name, question, a, b, c, d, answer):
+        sql = """
+        INSERT INTO Questions(test_name, question, A, B, C, D, answer) VALUES(?, ?, ?, ?, ?, ?, ?);
+        """
+        self.execute(sql, parameters=(test_name, question, a, b, c, d, answer), commit=True)
 
+    def question_names(self):
+        sql = """SELECT question FROM test_name;"""
+        return self.execute(sql, fetchall=True)
 
 def logger(statement):
     print(f"""

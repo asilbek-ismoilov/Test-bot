@@ -4,3 +4,4 @@ from . import help
 from . import about
 from . import xabar
 from . import add_questions
+from . import main

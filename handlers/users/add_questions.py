@@ -1,14 +1,18 @@
-from loader import dp,ADMINS
+from loader import dp,qb, ADMINS
 from aiogram.types import Message, CallbackQuery
 from filters.admin import IsBotAdminFilter
 from aiogram import F
 from states.add_questions import Questions
 from aiogram.fsm.context import FSMContext
 from keyboard_buttons.inline.menu import option
+from aiogram.types import ReplyKeyboardRemove
+from keyboard_buttons.inline.menu import ask
+import asyncio
+
 
 @dp.message(F.text=="Savol qo'shish",IsBotAdminFilter(ADMINS))
 async def add_questions(message:Message, state:FSMContext):
-    await message.answer(text="Savol nomini yozing !")
+    await message.answer("<b>🗂 Yangi savollar to'plamini yaratish uchun nom kiriting</b>", parse_mode="html",reply_markup=ReplyKeyboardRemove())
 
     await state.set_state(Questions.test_name)
 
@@ -90,10 +94,9 @@ async def d_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
-
 @dp.callback_query(F.data, Questions.answer)
-async def answer(callback:CallbackQuery, state:FSMContext):
-    
+async def answer(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
     data = await state.get_data()
     test_name = data.get("test_name")
     question = data.get("question")
@@ -103,10 +106,35 @@ async def answer(callback:CallbackQuery, state:FSMContext):
     d = data.get("d")
     answer = callback.data
 
-    await callback.message.answer(text=f"Savol nomi: {test_name}\nSavol: {question}\nA: {a}\nB: {b}\nC: {c}\nD: {d}\nJavob: {answer}")
+    qb.add_questions(
+        test_name=test_name, 
+        question=question, 
+        a=a, b=b, c=c, d=d, 
+        answer=answer
+    )
+
+    message_del = await callback.message.answer("Savol qo'shildi 🎉")
+    
+    await asyncio.sleep(3)
+    await message_del.delete()
+    
+    await state.clear()
+    await callback.message.answer("Savolni qo'shishni davom etasizmi ?", reply_markup=ask)
 
 @dp.message(Questions.answer)
 async def answer_del(message:Message, state:FSMContext):
     await message.answer(text= "Faqat matn yozing, boshqa fayllar mumkin emas ! ")
     await message.delete()
 
+@dp.callback_query(F.data == "true")
+async def add_another_question(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await callback.message.answer("<b>🗂 Yangi savollar to‘plamini yaratish uchun nom yoki   kiriting yoki Tugmalardan birini tanling</b>", parse_mode="html")
+    await state.set_state(Questions.question)
+
+@dp.callback_query(F.data == "false")
+async def cancel(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+
+    await callback.message.answer("Menu")
+    await state.clear()

@@ -13,3 +13,16 @@ admin_button = ReplyKeyboardMarkup(
    resize_keyboard=True,
    input_field_placeholder="Menudan birini tanlang"
 )
+
+# def menu(language):
+#     main_menu = ReplyKeyboardMarkup(
+#         keyboard=[
+#             [
+#                 KeyboardButton(),
+#             ]
+            
+#         ],
+#        resize_keyboard=True,
+#        input_field_placeholder="Menudan birini tanlang"
+#     )
+#     return menu
