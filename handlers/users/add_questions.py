@@ -8,7 +8,7 @@ from keyboard_buttons.inline.menu import option
 from aiogram.types import ReplyKeyboardRemove
 from keyboard_buttons.inline.menu import ask
 import asyncio
-
+from keyboard_buttons.default.button import get_buttun
 
 @dp.message(F.text=="Savol qo'shish",IsBotAdminFilter(ADMINS))
 async def add_questions(message:Message, state:FSMContext):
@@ -115,11 +115,11 @@ async def answer(callback: CallbackQuery, state: FSMContext):
 
     message_del = await callback.message.answer("Savol qo'shildi 🎉")
     
-    await asyncio.sleep(3)
-    await message_del.delete()
-    
     await state.clear()
     await callback.message.answer("Savolni qo'shishni davom etasizmi ?", reply_markup=ask)
+
+    await asyncio.sleep(3)
+    await message_del.delete()
 
 @dp.message(Questions.answer)
 async def answer_del(message:Message, state:FSMContext):
@@ -129,12 +129,12 @@ async def answer_del(message:Message, state:FSMContext):
 @dp.callback_query(F.data == "true")
 async def add_another_question(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
-    await callback.message.answer("<b>🗂 Yangi savollar to‘plamini yaratish uchun nom yoki   kiriting yoki Tugmalardan birini tanling</b>", parse_mode="html")
-    await state.set_state(Questions.question)
+    await callback.message.answer("<b>🗂 Yangi savollar to'plamini yaratish uchun nom kiriting \nyoki Tugmalardan birini tanling</b>", parse_mode="html", reply_markup=get_buttun())
+    await state.set_state(Questions.test_name)
 
 @dp.callback_query(F.data == "false")
 async def cancel(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
 
-    await callback.message.answer("Menu")
+    await callback.message.answer("Menu", reply_markup=get_buttun())
     await state.clear()

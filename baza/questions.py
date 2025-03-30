@@ -55,7 +55,7 @@ class Database:
         self.execute(sql, parameters=(test_name, question, a, b, c, d, answer), commit=True)
 
     def question_names(self):
-        sql = """SELECT question FROM test_name;"""
+        sql = """SELECT test_name FROM Questions;"""
         return self.execute(sql, fetchall=True)
 
 def logger(statement):
