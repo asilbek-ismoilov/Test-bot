@@ -20,3 +20,11 @@ ask = InlineKeyboardMarkup(
     ]
 )
 
+start_test = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Boshlash", callback_data="start"), 
+            InlineKeyboardButton(text="Bekor qilish", callback_data="false"), 
+        ]
+    ]
+)
