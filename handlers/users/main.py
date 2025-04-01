@@ -4,6 +4,14 @@ from aiogram import F
 from keyboard_buttons.inline.menu import start_test
 from aiogram.fsm.context import FSMContext
 import asyncio
+from keyboard_buttons.default.button import get_test
+import random
+
+
+@dp.message(lambda message: message.text == "Test yechish")
+async def test(message: Message):
+    await message.answer("Testni tanlang !", reply_markup=get_test())
+
 
 user_answers = {}
 user_polls = {}
@@ -13,7 +21,7 @@ async def test_start(message: Message, state: FSMContext):
     test_name = message.text
     await state.update_data(test_name=test_name)
     question_number = len(qb.get_questions(test_name))
-    text = f"Test nomi: <b>{test_name}</b> [<b>{question_number}</b>] \nTestni boshlash uchun <b>\"Boshlash\"</b> degan tugmani bosing !"
+    text = f"Test nomi: <b>{test_name}</b> [<b>{question_number}</b>] \nTestni boshlash uchun <b>\"Boshlash\"</b> degan tugmani bosing ! \n\n⚠️Eslatma. Xar bir test uchun 30 soniya"
     await message.answer(text, parse_mode="html", reply_markup=start_test)
 
 @dp.callback_query(F.data == "start")
@@ -22,7 +30,8 @@ async def start(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     test_name = data.get("test_name")
     questions = qb.get_questions(test_name)
-    
+    random.shuffle(questions)
+
     if not questions:
         await call.message.answer("Bu test bo'yicha savollar topilmadi!")
         return
@@ -45,26 +54,26 @@ async def start(call: CallbackQuery, state: FSMContext):
             options=options,
             type="quiz",
             correct_option_id=correct_option_id,
-            is_anonymous=False
+            is_anonymous=False,
+            open_period=30
         )
         
         if user_id not in user_polls:
             user_polls[user_id] = {}
         user_polls[user_id][poll_message.poll.id] = correct_option_id
         
-        try:
-            await asyncio.sleep(10)
-            if poll_message.poll.id in user_polls[user_id]:
-                user_answers[user_id]["wrong"] += 1  
-        except Exception as e:
-            print("Error:", e)
+        await asyncio.sleep(30)  
+        if poll_message.poll.id in user_polls[user_id]:
+            user_answers[user_id]["wrong"] += 1  
+            del user_polls[user_id][poll_message.poll.id]
 
     correct = user_answers[user_id]["correct"]
     wrong = user_answers[user_id]["wrong"]
     total = user_answers[user_id]["total"]
     full_name = call.from_user.full_name
+    test_percentage = (correct / total) * 100
     
-    await call.message.answer(f"{full_name} siz {test_name} savollar toplamidan {correct} tasini to'g'ri va {wrong} tasini xato yechdingiz 🎉")
+    await call.message.answer(f"{test_name} savollar natijasi \n{full_name} \nTo'g'ri: {correct} \nXato: {wrong} \nFoiz: {test_percentage}%")
     del user_answers[user_id]
     del user_polls[user_id]
 

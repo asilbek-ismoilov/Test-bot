@@ -18,7 +18,7 @@ async def add_questions(message:Message, state:FSMContext):
 
 @dp.message(F.text, Questions.test_name,IsBotAdminFilter(ADMINS))
 async def test_name(message:Message, state:FSMContext):
-    test_name = message.textx
+    test_name = message.text
     await state.update_data(test_name=test_name)
     await message.answer(text="Savolni yozing !")
 

@@ -1,5 +1,18 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from loader import qb
+
+
+menu_button = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Test yechish"),
+            KeyboardButton(text="Savol❓ va Takliflar 📝"),
+        ]
+    ],
+   resize_keyboard=True,
+   input_field_placeholder="Menudan birini tanlang"
+)
 
 
 def get_buttun():
